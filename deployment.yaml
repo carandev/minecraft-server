@@ -9,12 +9,11 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: rackspace-block-storage  # Ajusta según tu entorno
-  hostPath:  # Esto es solo un ejemplo; ajusta según tu entorno de almacenamiento
+  storageClassName: rackspace-block-storage # Ajusta según tu entorno
+  hostPath: # Esto es solo un ejemplo; ajusta según tu entorno de almacenamiento
     path: /mnt/data/minecraft
 
 ---
-
 # PersistentVolumeClaim (PVC)
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -29,7 +28,6 @@ spec:
   storageClassName: rackspace-block-storage
 
 ---
-
 # Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -48,28 +46,32 @@ spec:
         app: minecraft
     spec:
       containers:
-      - name: minecraft
-        image: itzg/minecraft-server
-        ports:
-        - containerPort: 25565
-        tty: true
-        stdin: true
-        env:
-        - name: EULA
-          value: "TRUE"
-        - name: DIFFICULTY
-          value: "NORMAL"
-        - name: ONLINE_MODE
-          value: "FALSE"
-        volumeMounts:
-        - name: minecraft-data
-          mountPath: /data
+        - name: minecraft
+          image: itzg/minecraft-server
+          ports:
+            - containerPort: 25565
+            - containerPort: 19132
+          tty: true
+          stdin: true
+          env:
+            - name: EULA
+              value: "TRUE"
+            - name: TYPE
+              value: "PAPER"
+            - name: PLUGINS
+              value: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot,https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot"
+            - name: DIFFICULTY
+              value: "NORMAL"
+            - name: ONLINE_MODE
+              value: "FALSE"
+          volumeMounts:
+            - name: minecraft-data
+              mountPath: /data
       volumes:
-      - name: minecraft-data
-        persistentVolumeClaim:
-          claimName: minecraft-pvc
+        - name: minecraft-data
+          persistentVolumeClaim:
+            claimName: minecraft-pvc
 ---
-
 # Service
 apiVersion: v1
 kind: Service
@@ -79,7 +81,10 @@ spec:
   selector:
     app: minecraft
   ports:
-  - port: 25565
-    targetPort: 25565
+    - port: 25565
+      name: java
+      targetPort: 25565
+    - port: 19132
+      name: bedrock
+      targetPort: 19132
   type: LoadBalancer
-
