@@ -81,10 +81,14 @@ spec:
   selector:
     app: minecraft
   ports:
-    - port: 25565
-      name: java
+    - name: java
+      protocol: TCP
+      port: 25565
       targetPort: 25565
-    - port: 19132
-      name: bedrock
+      nodePort: 30001
+    - name: bedrock
+      protocol: UDP
+      port: 19132
       targetPort: 19132
-  type: LoadBalancer
+      nodePort: 30002
+  type: NodePort
