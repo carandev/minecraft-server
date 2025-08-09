@@ -6,9 +6,11 @@ services:
     stdin_open: true
     ports:
       - "25565:25565"
+      - "19132:19132"
     environment:
       EULA: "TRUE"
       DIFFICULTY: "NORMAL"
       ONLINE_MODE: "FALSE"
+      PLUGINS: "https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot,https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot"
     volumes:
       - ./data:/data
